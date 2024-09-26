@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from PIL import Image
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -10,22 +9,8 @@ day_df = pd.read_csv("Dashboard/all_data.csv")
 # Set title for the dashboard
 st.title("Dashboard Analisis Penggunaan Sepeda")
 
-# Add a logo or image at the top
-logo = Image.open("path/to/logo.png")  # Ganti dengan path logo Anda
-st.image(logo, use_column_width=True)
-
 # Sidebar for navigation
 st.sidebar.header("Pilih Analisis")
-
-# Add tips for using the dashboard
-st.sidebar.markdown(
-    """
-    ### Tips Penggunaan:
-    - Gunakan slider untuk memfilter jumlah pengguna sepeda.
-    - Pilih jenis analisis dari dropdown untuk melihat visualisasi yang berbeda.
-    - Setiap grafik disertai deskripsi untuk membantu pemahaman.
-    """
-)
 
 # Dropdown menu for choosing the analysis type
 analysis_type = st.sidebar.selectbox(
@@ -43,7 +28,7 @@ user_filter = st.sidebar.slider(
     value=(0, 1000)
 )
 
-# Filter data based on user input for all analyses except windspeed
+# Filter data based on user input
 filtered_df = day_df[(day_df['cnt'] >= user_filter[0]) & (day_df['cnt'] <= user_filter[1])]
 
 # Display filtered data
@@ -84,13 +69,12 @@ elif analysis_type == "Penggunaan Berdasarkan Kelembapan":
 elif analysis_type == "Penggunaan Berdasarkan Kecepatan Angin":
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
 
-    # Use the original dataframe for windspeed analysis
     fig, ax = plt.subplots(figsize=(12, 6))
-    sns.scatterplot(x='windspeed', y='cnt', data=day_df, ax=ax)  # Use original day_df
+    sns.scatterplot(x='windspeed', y='cnt', data=filtered_df, ax=ax)  # Use filtered_df
     ax.set_title("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
-    sns.regplot(x='windspeed', y='cnt', data=day_df, ax=ax, scatter=False, color='red')  # Use original day_df
+    sns.regplot(x='windspeed', y='cnt', data=filtered_df, ax=ax, scatter=False, color='red')  # Add trend line
     plt.tight_layout()
     st.pyplot(fig)
 
