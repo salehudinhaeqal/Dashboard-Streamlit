@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.express as px
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -60,15 +59,14 @@ elif analysis_type == "Penggunaan Berdasarkan Kelembapan":
 elif analysis_type == "Penggunaan Berdasarkan Kecepatan Angin":
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
 
-    fig = px.scatter(
-        filtered_df, 
-        x='windspeed', 
-        y='cnt', 
-        title="Hubungan antara Kecepatan Angin dan Penggunaan Sepeda",
-        labels={'windspeed': 'Kecepatan Angin (m/s)', 'cnt': 'Jumlah Pengguna Sepeda'},
-        trendline="ols"
-    )
-    st.plotly_chart(fig)
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.scatterplot(x='windspeed', y='cnt', data=filtered_df, ax=ax)
+    ax.set_title("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", fontsize=16)
+    ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
+    ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
+    sns.regplot(x='windspeed', y='cnt', data=filtered_df, ax=ax, scatter=False, color='red')
+    plt.tight_layout()
+    st.pyplot(fig)
 
 # Analysis 4: Penggunaan Berdasarkan Situasi Cuaca
 elif analysis_type == "Penggunaan Berdasarkan Situasi Cuaca":
@@ -93,14 +91,14 @@ elif analysis_type == "Penggunaan Berdasarkan Bulan":
 
     monthly_usage = filtered_df.groupby('mnth')['cnt'].mean().reset_index()
 
-    fig = px.line(
-        monthly_usage, 
-        x='mnth', 
-        y='cnt', 
-        title="Pola Penggunaan Sepeda Berdasarkan Bulan",
-        labels={'mnth': 'Bulan', 'cnt': 'Rata-rata Jumlah Pengguna'}
-    )
-    st.plotly_chart(fig)
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.lineplot(x='mnth', y='cnt', data=monthly_usage, ax=ax, marker='o')
+    ax.set_title("Pola Penggunaan Sepeda Berdasarkan Bulan", fontsize=16)
+    ax.set_xlabel('Bulan', fontsize=12)
+    ax.set_ylabel('Rata-rata Jumlah Pengguna', fontsize=12)
+    plt.xticks(monthly_usage['mnth'])  # Set xticks to show all months
+    plt.tight_layout()
+    st.pyplot(fig)
 
 # Display footer with your name
 st.sidebar.markdown("---")
