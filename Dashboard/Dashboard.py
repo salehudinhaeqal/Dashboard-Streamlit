@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from PIL import Image
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -9,8 +10,22 @@ day_df = pd.read_csv("Dashboard/all_data.csv")
 # Set title for the dashboard
 st.title("Dashboard Analisis Penggunaan Sepeda")
 
+# Add a logo or image at the top
+logo = Image.open("path/to/logo.png")  # Ganti dengan path logo Anda
+st.image(logo, use_column_width=True)
+
 # Sidebar for navigation
 st.sidebar.header("Pilih Analisis")
+
+# Add tips for using the dashboard
+st.sidebar.markdown(
+    """
+    ### Tips Penggunaan:
+    - Gunakan slider untuk memfilter jumlah pengguna sepeda.
+    - Pilih jenis analisis dari dropdown untuk melihat visualisasi yang berbeda.
+    - Setiap grafik disertai deskripsi untuk membantu pemahaman.
+    """
+)
 
 # Dropdown menu for choosing the analysis type
 analysis_type = st.sidebar.selectbox(
