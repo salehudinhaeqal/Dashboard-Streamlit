@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -45,9 +47,19 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
     # Filter data to show only up to 1000 users
     filtered_windspeed_data = day_df[day_df['cnt'] <= 1000]
     
+    # Prepare data for linear regression
+    X = filtered_windspeed_data[['windspeed']]
+    y = filtered_windspeed_data['cnt']
+    model = LinearRegression()
+    model.fit(X, y)
+    
+    # Create predictions for plotting the regression line
+    filtered_windspeed_data['predicted'] = model.predict(X)
+
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
-    sns.regplot(x='windspeed', y='cnt', data=filtered_windspeed_data, scatter=False, color='red', ax=ax)
+    ax.plot(filtered_windspeed_data['windspeed'], filtered_windspeed_data['predicted'], 
+            color='red', linewidth=2, alpha=0.8)  # Garis regresi
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
