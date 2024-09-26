@@ -58,8 +58,16 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
 
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
-    ax.plot(filtered_windspeed_data['windspeed'], filtered_windspeed_data['predicted'], 
-            color='red', linewidth=2, alpha=0.8)  # Garis regresi
+    
+    # Find minimum and maximum values for the x-axis
+    x_min, x_max = filtered_windspeed_data['windspeed'].min(), filtered_windspeed_data['windspeed'].max()
+    
+    # Create predictions for the minimum and maximum x values for the regression line
+    line_x = np.array([x_min, x_max]).reshape(-1, 1)
+    line_y = model.predict(line_x)
+
+    # Plot the regression line from min to max
+    ax.plot(line_x, line_y, color='red', linewidth=2, alpha=0.8)  # Garis regresi
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
