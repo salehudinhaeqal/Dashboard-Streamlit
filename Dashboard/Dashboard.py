@@ -42,20 +42,22 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan", key
 if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", key="windspeed"):
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
     
-    # Menghilangkan filter untuk menampilkan seluruh data
+    # Filter data untuk menjaga batas cnt <= 1000, namun tidak menghilangkan data pada kecepatan angin 0.1
+    filtered_windspeed_data = day_df[(day_df['cnt'] <= 1000)]  # Tetap mempertahankan cnt <= 1000
+    
     fig, ax = plt.subplots(figsize=(12, 6))
     
-    # Menampilkan seluruh data tanpa filter
-    sns.scatterplot(x='windspeed', y='cnt', data=day_df, alpha=0.6, ax=ax)
+    # Scatter plot dari data yang sudah difilter
+    sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
     
-    # Menggambar garis lurus manual dari (0, 1000) ke (0.8, 0)
+    # Menggambar garis lurus manual dari (0, 1000) ke (0.8, 0) tanpa merubah sebaran data
     ax.plot([0, 0.8], [1000, 0], color='red', linewidth=2, alpha=0.8, label="Perkiraan Pola Penggunaan Sepeda")
     
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
     ax.grid(True)
-    ax.legend()  # Menampilkan label di plot
+    ax.legend()  # Menampilkan label garis merah di plot
     plt.tight_layout()
     
     st.pyplot(fig)
@@ -68,14 +70,6 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
         "pola penurunan penggunaan sepeda berdasarkan kecepatan angin."
     )
 
-    
-    # Explanation for windspeed analysis
-    st.write(
-        "Grafik ini menunjukkan hubungan antara kecepatan angin dan jumlah pengguna sepeda. "
-        "Dengan menggunakan plot sebar dan garis lurus, kita dapat melihat bahwa pada kecepatan angin "
-        "yang lebih tinggi, jumlah pengguna sepeda cenderung berkurang. Garis merah menunjukkan estimasi "
-        "pola penurunan penggunaan sepeda berdasarkan kecepatan angin."
-    )
 
 # Option to display weather situation analysis
 if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", key="weather"):
