@@ -28,7 +28,7 @@ user_filter = st.sidebar.slider(
     value=(0, 1000)
 )
 
-# Filter data based on user input
+# Filter data based on user input for all analyses except windspeed
 filtered_df = day_df[(day_df['cnt'] >= user_filter[0]) & (day_df['cnt'] <= user_filter[1])]
 
 # Display filtered data
@@ -55,18 +55,40 @@ elif analysis_type == "Penggunaan Berdasarkan Kelembapan":
     plt.tight_layout()
     st.pyplot(fig)
 
+    # Deskripsi untuk visualisasi kelembapan
+    st.markdown(
+        """
+        **Deskripsi:**
+        Visualisasi ini menunjukkan rata-rata jumlah pengguna sepeda berdasarkan tingkat kelembapan. 
+        Setiap batang mewakili rentang persentase kelembapan yang berbeda. 
+        Dengan informasi ini, kita dapat melihat seberapa besar pengaruh kelembapan terhadap penggunaan sepeda.
+        """
+    )
+
 # Analysis 3: Penggunaan Sepeda Berdasarkan Kecepatan Angin
 elif analysis_type == "Penggunaan Berdasarkan Kecepatan Angin":
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
 
+    # Use the original dataframe for windspeed analysis
     fig, ax = plt.subplots(figsize=(12, 6))
-    sns.scatterplot(x='windspeed', y='cnt', data=filtered_df, ax=ax)
+    sns.scatterplot(x='windspeed', y='cnt', data=day_df, ax=ax)  # Use original day_df
     ax.set_title("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
-    sns.regplot(x='windspeed', y='cnt', data=filtered_df, ax=ax, scatter=False, color='red')
+    sns.regplot(x='windspeed', y='cnt', data=day_df, ax=ax, scatter=False, color='red')  # Use original day_df
     plt.tight_layout()
     st.pyplot(fig)
+
+    # Deskripsi untuk visualisasi kecepatan angin
+    st.markdown(
+        """
+        **Deskripsi:**
+        Visualisasi ini menunjukkan hubungan antara kecepatan angin dan jumlah pengguna sepeda. 
+        Titik-titik di grafik mewakili data aktual, sedangkan garis merah menunjukkan tren umum 
+        menggunakan regresi linier. Ini membantu kita memahami apakah kecepatan angin memiliki pengaruh 
+        terhadap jumlah pengguna sepeda.
+        """
+    )
 
 # Analysis 4: Penggunaan Berdasarkan Situasi Cuaca
 elif analysis_type == "Penggunaan Berdasarkan Situasi Cuaca":
@@ -85,6 +107,16 @@ elif analysis_type == "Penggunaan Berdasarkan Situasi Cuaca":
     plt.tight_layout()
     st.pyplot(fig)
 
+    # Deskripsi untuk visualisasi situasi cuaca
+    st.markdown(
+        """
+        **Deskripsi:**
+        Grafik ini menampilkan rata-rata jumlah pengguna sepeda berdasarkan situasi cuaca yang berbeda. 
+        Setiap batang menunjukkan rata-rata penggunaan sepeda pada situasi cuaca yang bervariasi, 
+        memungkinkan kita untuk memahami bagaimana cuaca mempengaruhi keputusan untuk menggunakan sepeda.
+        """
+    )
+
 # Analysis 5: Penggunaan Berdasarkan Bulan
 elif analysis_type == "Penggunaan Berdasarkan Bulan":
     st.subheader("Pola Penggunaan Sepeda Berdasarkan Bulan")
@@ -99,6 +131,16 @@ elif analysis_type == "Penggunaan Berdasarkan Bulan":
     plt.xticks(monthly_usage['mnth'])  # Set xticks to show all months
     plt.tight_layout()
     st.pyplot(fig)
+
+    # Deskripsi untuk visualisasi berdasarkan bulan
+    st.markdown(
+        """
+        **Deskripsi:**
+        Visualisasi ini menunjukkan pola penggunaan sepeda rata-rata berdasarkan bulan. 
+        Garis mengindikasikan tren penggunaan sepeda dari bulan ke bulan, 
+        memberikan wawasan tentang bagaimana penggunaan sepeda berfluktuasi sepanjang tahun.
+        """
+    )
 
 # Display footer with your name
 st.sidebar.markdown("---")
