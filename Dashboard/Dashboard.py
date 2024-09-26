@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -46,20 +45,10 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
     # Filter data to show only up to 1000 users
     filtered_windspeed_data = day_df[day_df['cnt'] <= 1000]
     
-    # Menggunakan Numpy untuk Linear Regression
-    X = filtered_windspeed_data['windspeed'].values.reshape(-1, 1)
-    y = filtered_windspeed_data['cnt'].values
-
-    # Menghitung parameter regresi (slope dan intercept)
-    A = np.vstack([X.squeeze(), np.ones(len(X))]).T
-    m, c = np.linalg.lstsq(A, y, rcond=None)[0]
-
-    # Prediksi menggunakan parameter yang didapat
-    line_y = m * X + c
-
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
-    ax.plot(X, line_y, color='red', linewidth=2, alpha=0.8)  # Garis regresi
+    sns.regplot(x='windspeed', y='cnt', data=filtered_windspeed_data, scatter=False, 
+                color='red', ax=ax, line_kws={"linewidth": 2, "alpha": 0.8})  # Penambahan linewidth dan alpha
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
