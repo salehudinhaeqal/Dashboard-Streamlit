@@ -47,8 +47,11 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
     
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
+    
+    # Menggunakan regplot dengan estimator polynomial (order=2) agar sesuai dengan gambar
     sns.regplot(x='windspeed', y='cnt', data=filtered_windspeed_data, scatter=False, 
-                color='red', ax=ax, line_kws={"linewidth": 2, "alpha": 0.8})  # Penambahan linewidth dan alpha
+                color='red', order=2, ax=ax, line_kws={"linewidth": 2, "alpha": 0.8})
+    
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
@@ -64,6 +67,7 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
         "yang lebih tinggi, jumlah pengguna sepeda cenderung berkurang. Hal ini mungkin terkait dengan "
         "kenyamanan pengguna saat bersepeda."
     )
+
 
 # Option to display weather situation analysis
 if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", key="weather"):
