@@ -42,25 +42,32 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan", key
 if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", key="windspeed"):
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
     
-    # Filter data to show only up to 1000 users
-    filtered_windspeed_data = day_df[day_df['cnt'] <= 1000]
-    
+    # Menghilangkan filter untuk menampilkan seluruh data
     fig, ax = plt.subplots(figsize=(12, 6))
     
-    # Mengembalikan scatter plot seperti semula
-    sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
+    # Menampilkan seluruh data tanpa filter
+    sns.scatterplot(x='windspeed', y='cnt', data=day_df, alpha=0.6, ax=ax)
     
-    # Menggambar garis lurus manual dari (0, 1000) ke (0.8, 0) tanpa merubah sebaran data
+    # Menggambar garis lurus manual dari (0, 1000) ke (0.8, 0)
     ax.plot([0, 0.8], [1000, 0], color='red', linewidth=2, alpha=0.8, label="Perkiraan Pola Penggunaan Sepeda")
     
     ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
     ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
     ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
     ax.grid(True)
-    ax.legend()  # Menampilkan label garis merah di plot
+    ax.legend()  # Menampilkan label di plot
     plt.tight_layout()
     
     st.pyplot(fig)
+    
+    # Explanation for windspeed analysis
+    st.write(
+        "Grafik ini menunjukkan hubungan antara kecepatan angin dan jumlah pengguna sepeda. "
+        "Dengan menggunakan plot sebar dan garis lurus, kita dapat melihat bahwa pada kecepatan angin "
+        "yang lebih tinggi, jumlah pengguna sepeda cenderung berkurang. Garis merah menunjukkan estimasi "
+        "pola penurunan penggunaan sepeda berdasarkan kecepatan angin."
+    )
+
     
     # Explanation for windspeed analysis
     st.write(
