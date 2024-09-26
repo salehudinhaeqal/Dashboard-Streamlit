@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load data
-day_df = pd.read_csv("Dashboard/all_data.csv")
+day_df = pd.read_csv("all_data.csv")
 
 # Set title for the dashboard
 st.title("Dashboard Analisis Penggunaan Sepeda")
@@ -30,6 +30,13 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan", key
     plt.tight_layout()
     
     st.pyplot(fig)
+    
+    # Explanation for humidity analysis
+    st.write(
+        "Grafik ini menunjukkan hubungan antara kelembapan dan rata-rata penggunaan sepeda. "
+        "Dari grafik, kita dapat melihat bahwa pada tingkat kelembapan tertentu, jumlah pengguna sepeda "
+        "cenderung berubah. Ini dapat membantu dalam memahami bagaimana cuaca mempengaruhi penggunaan sepeda."
+    )
 
 # Option to display windspeed analysis
 if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", key="windspeed"):
@@ -48,6 +55,14 @@ if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", 
     plt.tight_layout()
     
     st.pyplot(fig)
+    
+    # Explanation for windspeed analysis
+    st.write(
+        "Grafik ini menunjukkan hubungan antara kecepatan angin dan jumlah pengguna sepeda. "
+        "Dengan menggunakan plot sebar dan garis regresi, kita dapat melihat bahwa pada kecepatan angin "
+        "yang lebih tinggi, jumlah pengguna sepeda cenderung berkurang. Hal ini mungkin terkait dengan "
+        "kenyamanan pengguna saat bersepeda."
+    )
 
 # Option to display weather situation analysis
 if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", key="weather"):
@@ -65,6 +80,14 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", 
     plt.tight_layout()
     
     st.pyplot(fig)
+    
+    # Explanation for weather situation analysis
+    st.write(
+        "Grafik ini menunjukkan rata-rata penggunaan sepeda berdasarkan situasi cuaca. "
+        "Dari grafik, terlihat bahwa penggunaan sepeda paling tinggi terjadi saat cuaca cerah, "
+        "sementara penggunaan menurun signifikan saat hujan. Informasi ini sangat berguna bagi pengelola "
+        "jasa berbagi sepeda untuk merencanakan operasional."
+    )
 
 # Option to display monthly usage analysis
 if st.sidebar.checkbox("Pola Penggunaan Sepeda Berdasarkan Bulan", key="monthly"):
@@ -82,6 +105,14 @@ if st.sidebar.checkbox("Pola Penggunaan Sepeda Berdasarkan Bulan", key="monthly"
     plt.tight_layout()
     
     st.pyplot(fig)
+    
+    # Explanation for monthly usage analysis
+    st.write(
+        "Grafik ini menggambarkan pola penggunaan sepeda berdasarkan bulan. "
+        "Terlihat adanya fluktuasi dalam jumlah pengguna sepeda setiap bulan, "
+        "yang dapat membantu dalam perencanaan layanan berbagi sepeda. "
+        "Pengelola dapat melihat bulan-bulan dengan permintaan tinggi dan rendah."
+    )
 
 # Display footer with your name
 st.sidebar.markdown("---")
