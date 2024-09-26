@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Load data
 day_df = pd.read_csv("Dashboard/all_data.csv")
@@ -12,15 +13,40 @@ st.title("Dashboard Analisis Penggunaan Sepeda")
 # Sidebar for navigation
 st.sidebar.header("Pilih Analisis")
 
-# Display the data in the dashboard
-st.subheader("Data Penggunaan Sepeda")
-st.dataframe(day_df)
+# Dropdown menu for choosing the analysis type
+analysis_type = st.sidebar.selectbox(
+    "Pilih Jenis Analisis", 
+    ["Data Penggunaan Sepeda", "Penggunaan Berdasarkan Kelembapan", 
+     "Penggunaan Berdasarkan Kecepatan Angin", "Penggunaan Berdasarkan Situasi Cuaca", 
+     "Penggunaan Berdasarkan Bulan"]
+)
 
-# Option to display humidity analysis
-if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan", key="humidity"):
+# Slider for filtering data based on the number of users
+user_filter = st.sidebar.slider(
+    "Filter Berdasarkan Jumlah Pengguna Sepeda", 
+    min_value=int(day_df['cnt'].min()), 
+    max_value=int(day_df['cnt'].max()), 
+    value=(0, 1000)
+)
+
+# Filter data based on user input
+filtered_df = day_df[(day_df['cnt'] >= user_filter[0]) & (day_df['cnt'] <= user_filter[1])]
+
+# Display filtered data
+st.subheader(f"Menampilkan Data untuk Jumlah Pengguna Sepeda antara {user_filter[0]} dan {user_filter[1]}")
+st.dataframe(filtered_df)
+
+# Analysis 1: Display basic data
+if analysis_type == "Data Penggunaan Sepeda":
+    st.subheader("Data Penggunaan Sepeda")
+    st.dataframe(filtered_df)
+
+# Analysis 2: Penggunaan Sepeda Berdasarkan Kelembapan
+elif analysis_type == "Penggunaan Berdasarkan Kelembapan":
     st.subheader("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan")
-    humidity_usage = day_df.groupby(pd.cut(day_df['hum'], bins=10))['cnt'].mean().reset_index()
     
+    humidity_usage = filtered_df.groupby(pd.cut(filtered_df['hum'], bins=10))['cnt'].mean().reset_index()
+
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x='hum', y='cnt', data=humidity_usage, palette='Blues', ax=ax)
     ax.set_title('Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan', fontsize=16)
@@ -28,54 +54,28 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Kelembapan", key
     ax.set_ylabel('Rata-rata Jumlah Pengguna Sepeda', fontsize=12)
     ax.grid(True)
     plt.tight_layout()
-    
     st.pyplot(fig)
-    
-    # Explanation for humidity analysis
-    st.write(
-        "Grafik ini menunjukkan hubungan antara kelembapan dan rata-rata penggunaan sepeda. "
-        "Dari grafik, kita dapat melihat bahwa pada tingkat kelembapan tertentu, jumlah pengguna sepeda "
-        "cenderung berubah. Ini dapat membantu dalam memahami bagaimana cuaca mempengaruhi penggunaan sepeda."
-    )
 
-# Option to display windspeed analysis
-if st.sidebar.checkbox("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda", key="windspeed"):
+# Analysis 3: Penggunaan Sepeda Berdasarkan Kecepatan Angin
+elif analysis_type == "Penggunaan Berdasarkan Kecepatan Angin":
     st.subheader("Hubungan antara Kecepatan Angin dan Penggunaan Sepeda")
-    
-    # Filter data untuk menjaga batas cnt <= 1000, namun tidak menghilangkan data pada kecepatan angin 0.1
-    filtered_windspeed_data = day_df[(day_df['cnt'] <= 1000)]  # Tetap mempertahankan cnt <= 1000
-    
-    fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # Scatter plot dari data yang sudah difilter
-    sns.scatterplot(x='windspeed', y='cnt', data=filtered_windspeed_data, alpha=0.6, ax=ax)
-    
-    # Menggambar garis lurus manual dari (0, 1000) ke (0.8, 0) tanpa merubah sebaran data
-    ax.plot([0, 0.8], [1000, 0], color='red', linewidth=2, alpha=0.8, label="Perkiraan Pola Penggunaan Sepeda")
-    
-    ax.set_title('Hubungan antara Kecepatan Angin dan Penggunaan Sepeda', fontsize=16)
-    ax.set_xlabel('Kecepatan Angin (m/s)', fontsize=12)
-    ax.set_ylabel('Jumlah Pengguna Sepeda', fontsize=12)
-    ax.grid(True)
-    ax.legend()  # Menampilkan label garis merah di plot
-    plt.tight_layout()
-    
-    st.pyplot(fig)
-    
-    # Explanation for windspeed analysis
-    st.write(
-        "Grafik ini menunjukkan hubungan antara kecepatan angin dan jumlah pengguna sepeda. "
-        "Dengan menggunakan plot sebar dan garis lurus, kita dapat melihat bahwa pada kecepatan angin "
-        "yang lebih tinggi, jumlah pengguna sepeda cenderung berkurang. Garis merah menunjukkan estimasi "
-        "pola penurunan penggunaan sepeda berdasarkan kecepatan angin."
+
+    fig = px.scatter(
+        filtered_df, 
+        x='windspeed', 
+        y='cnt', 
+        title="Hubungan antara Kecepatan Angin dan Penggunaan Sepeda",
+        labels={'windspeed': 'Kecepatan Angin (m/s)', 'cnt': 'Jumlah Pengguna Sepeda'},
+        trendline="ols"
     )
+    st.plotly_chart(fig)
 
-
-# Option to display weather situation analysis
-if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", key="weather"):
+# Analysis 4: Penggunaan Berdasarkan Situasi Cuaca
+elif analysis_type == "Penggunaan Berdasarkan Situasi Cuaca":
     st.subheader("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca")
-    weather_usage = day_df.groupby('weathersit')['cnt'].mean().reset_index()
     
+    weather_usage = filtered_df.groupby('weathersit')['cnt'].mean().reset_index()
+
     fig, ax = plt.subplots(figsize=(12, 6))
     sns.barplot(x='weathersit', y='cnt', data=weather_usage, palette='viridis', ax=ax)
     ax.set_title('Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca', fontsize=16)
@@ -85,41 +85,22 @@ if st.sidebar.checkbox("Rata-rata Penggunaan Sepeda Berdasarkan Situasi Cuaca", 
     ax.set_xticklabels(['Cerah', 'Berawan', 'Hujan Ringan', 'Hujan Berat'])
     ax.grid(True)
     plt.tight_layout()
-    
     st.pyplot(fig)
-    
-    # Explanation for weather situation analysis
-    st.write(
-        "Grafik ini menunjukkan rata-rata penggunaan sepeda berdasarkan situasi cuaca. "
-        "Dari grafik, terlihat bahwa penggunaan sepeda paling tinggi terjadi saat cuaca cerah, "
-        "sementara penggunaan menurun signifikan saat hujan. Informasi ini sangat berguna bagi pengelola "
-        "jasa berbagi sepeda untuk merencanakan operasional."
-    )
 
-# Option to display monthly usage analysis
-if st.sidebar.checkbox("Pola Penggunaan Sepeda Berdasarkan Bulan", key="monthly"):
+# Analysis 5: Penggunaan Berdasarkan Bulan
+elif analysis_type == "Penggunaan Berdasarkan Bulan":
     st.subheader("Pola Penggunaan Sepeda Berdasarkan Bulan")
-    monthly_usage = day_df.groupby('mnth')['cnt'].mean().reset_index()
-    
-    fig, ax = plt.subplots(figsize=(12, 6))
-    sns.lineplot(x='mnth', y='cnt', data=monthly_usage, marker='o', color='purple', ax=ax)
-    ax.set_title('Pola Penggunaan Sepeda Berdasarkan Bulan', fontsize=16)
-    ax.set_xlabel('Bulan', fontsize=12)
-    ax.set_ylabel('Rata-rata Jumlah Pengguna Sepeda', fontsize=12)
-    ax.set_xticks(range(1, 13))
-    ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
-    ax.grid(True)
-    plt.tight_layout()
-    
-    st.pyplot(fig)
-    
-    # Explanation for monthly usage analysis
-    st.write(
-        "Grafik ini menggambarkan pola penggunaan sepeda berdasarkan bulan. "
-        "Terlihat adanya fluktuasi dalam jumlah pengguna sepeda setiap bulan, "
-        "yang dapat membantu dalam perencanaan layanan berbagi sepeda. "
-        "Pengelola dapat melihat bulan-bulan dengan permintaan tinggi dan rendah."
+
+    monthly_usage = filtered_df.groupby('mnth')['cnt'].mean().reset_index()
+
+    fig = px.line(
+        monthly_usage, 
+        x='mnth', 
+        y='cnt', 
+        title="Pola Penggunaan Sepeda Berdasarkan Bulan",
+        labels={'mnth': 'Bulan', 'cnt': 'Rata-rata Jumlah Pengguna'}
     )
+    st.plotly_chart(fig)
 
 # Display footer with your name
 st.sidebar.markdown("---")
