@@ -12,7 +12,7 @@ conda activate main-ds
 pip install -r requirements.txt
 ```
 
-## Run steamlit app
+## Run streamlit app
 ```
 cd Dashboard
 streamlit run Dashboard.py
