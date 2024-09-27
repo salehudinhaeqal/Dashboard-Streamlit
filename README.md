@@ -20,5 +20,5 @@ streamlit run Dashboard.py
 
 ## Kontak
 ```
-Untuk pertanyaan lebih lanjut, silakan hubungi: +62816800163 | Haeqal Salehudin
+Jika ada yang ingin di diskusikan, silakan hubungi: +62816800163 | Haeqal Salehudin
 ```
